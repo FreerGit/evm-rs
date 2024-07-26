@@ -38,6 +38,13 @@ impl Bytecode {
             Bytecode::Eof(_) => todo!(),
         }
     }
+
+    pub fn is_empty(&self) -> bool {
+        match self {
+            Bytecode::Legacy(bytes) => bytes.is_empty(),
+            Bytecode::Eof(_) => todo!(),
+        }
+    }
 }
 
 #[cfg(test)]

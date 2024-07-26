@@ -33,6 +33,10 @@ impl Stack {
         self.data.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.data.is_empty()
+    }
+
     pub fn push(&mut self, value: U256) -> Result<()> {
         if self.data.len() >= STACK_LIMIT {
             return Err(StackError::Overflow);

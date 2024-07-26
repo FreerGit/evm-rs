@@ -74,13 +74,13 @@ operations! {
     PUSH1, 0x60;
 }
 
-pub struct OperationContext {
-    immediate_size: u8,
-    input: u8,
-    output: u8,
-    is_terminating: bool,
-    // set EVM revision
-}
+// pub struct OperationContext {
+//     immediate_size: u8,
+//     input: u8,
+//     output: u8,
+//     is_terminating: bool,
+//     // set EVM revision
+// }
 
 // impl OperationContext {
 //     pub fn get_instruction(self) -> fn() -> () {
@@ -91,10 +91,10 @@ pub struct OperationContext {
 //     }
 // }
 
-pub struct OperationInfo {
-    inputs: u8,
-    outputs: u8,
-}
+// pub struct OperationInfo {
+//     inputs: u8,
+//     outputs: u8,
+// }
 
 #[cfg(test)]
 mod tests {
