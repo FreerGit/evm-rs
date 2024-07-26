@@ -13,3 +13,10 @@ codegen-units = 1
 
 [build]
 rustflags = ["-C", "target-cpu=native"]
+
+[dependencies]
+ruint = { version = "1.12.3", default-features = false, features = ["alloc"] }
+ruint-macro = { version = "1", default-features = false }
+hashbrown = "0.14"
+bytes = "1.6.1"
+hex = "0.4.3"

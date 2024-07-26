@@ -1,8 +1,6 @@
 use bytes::Bytes;
 use hex::FromHexError;
 
-use crate::interpreter::operation::Operation;
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum Bytecode {
     Legacy(Bytes),
@@ -18,6 +16,27 @@ impl Bytecode {
     pub fn parse(value: &str) -> Result<Self, FromHexError> {
         let hex = hex::decode(value.strip_prefix("0x").unwrap_or(value))?;
         Ok(Bytecode::Legacy(Bytes::from(hex)))
+    }
+
+    pub fn bytes(&self) -> &Bytes {
+        match self {
+            Bytecode::Legacy(bytes) => bytes,
+            Bytecode::Eof(_) => todo!(),
+        }
+    }
+
+    pub fn bytes_slice(&self) -> &[u8] {
+        match self {
+            Bytecode::Legacy(bytes) => bytes,
+            Bytecode::Eof(_) => todo!(),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        match self {
+            Bytecode::Legacy(bytes) => bytes.len(),
+            Bytecode::Eof(_) => todo!(),
+        }
     }
 }
 
