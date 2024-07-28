@@ -2,7 +2,7 @@ use bytes::Bytes;
 
 use crate::{
     domain::{bytecode::Bytecode, constants::U256},
-    interpreter::operation::Operation,
+    interpreter::opcodes::{self, Opcode},
     stack::Stack,
 };
 
@@ -24,13 +24,15 @@ impl EVM {
     pub fn execute(&mut self) {
         while self.pc < self.code.len() {
             let opcode = self.code.bytes_slice();
-            match Operation::new(opcode[self.pc]) {
-                Some(Operation::PUSH1) => {
+            match Opcode::new(opcode[self.pc]) {
+                Some(opcode) => {
+                    // how do I do this lmfaoooo
+                    opcode.instruction()
                     self.pc += 1;
                     let value = opcode[self.pc];
                     self.stack.push(U256::from(value)).unwrap();
                 }
-                Some(Operation::POP) => {
+                Some(opcodes::POP) => {
                     self.stack.pop().unwrap();
                 }
                 None => todo!(),
@@ -47,7 +49,7 @@ mod tests {
 
     #[test]
     fn test_push_pop() {
-        let code = Bytes::from_static(&[0x60, 0x2A, 0x50]);
+        let code = Bytes::from_static(&[opcodes::PUSH1, 0x2A, opcodes::POP]);
         let mut evm = EVM::new(code);
         evm.execute();
 
