@@ -4,12 +4,20 @@ use std::vec::Vec;
 
 use crate::domain::constants::U256;
 
+use super::InstructionResult;
+
 pub type Result<T> = std::result::Result<T, StackError>;
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum StackError {
     Overflow,
     Underflow,
+}
+
+impl From<StackError> for InstructionResult {
+    fn from(value: StackError) -> Self {
+        InstructionResult::StackError(value)
+    }
 }
 
 pub struct Stack {
@@ -47,5 +55,14 @@ impl Stack {
 
     pub fn pop(&mut self) -> Result<U256> {
         self.data.pop().ok_or(StackError::Underflow)
+    }
+
+    pub fn top(&mut self) -> Option<&mut U256> {
+        let len = self.data.len();
+        if len > 1 {
+            Some(&mut self.data[len - 1])
+        } else {
+            None
+        }
     }
 }
