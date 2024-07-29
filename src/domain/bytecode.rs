@@ -57,11 +57,11 @@ mod tests {
     fn parse() {
         let expected = Bytes::from_static(&[0x01, 0x60, 0x01, 0x40]);
         assert_eq!(
-            Bytecode::parse(&"0x01600140").unwrap(),
+            Bytecode::parse("0x01600140").unwrap(),
             Bytecode::new_legacy(expected.clone())
         );
         assert_eq!(
-            Bytecode::parse(&"01600140").unwrap(),
+            Bytecode::parse("01600140").unwrap(),
             Bytecode::new_legacy(expected.clone())
         );
     }
