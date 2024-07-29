@@ -20,6 +20,7 @@ impl From<StackError> for InstructionResult {
     }
 }
 
+#[derive(Debug)]
 pub struct Stack {
     data: Vec<U256>,
 }

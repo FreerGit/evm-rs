@@ -4,10 +4,7 @@ pub mod stack;
 use bytes::Bytes;
 use stack::{Stack, StackError};
 
-use crate::{
-    domain::{bytecode::Bytecode, constants::U256},
-    interpreter::opcodes::Opcode,
-};
+use crate::{domain::bytecode::Bytecode, interpreter::opcodes::Opcode};
 
 #[derive(Debug, Default, Eq, PartialEq)]
 pub enum InstructionResult {
@@ -50,27 +47,12 @@ impl Interpreter {
                 None => todo!(),
             }
         }
-        self.pc += 1;
     }
 
     pub fn run(&mut self) {
-        // while self.pc < self.code.len() {
-        //     let opcode = self.code.bytes_slice();
-
-        //     match Opcode::new(opcode[self.pc]) {
-        //         Some(Opcode::PUSH0) => {
-        //             let context = Opcode::context(Opcode::PUSH0);
-        //             // opcode.instruction(&mut self);
-        //         }
-        //         Some(Opcode::POP) => {
-        //             let context = Opcode::context(Opcode::POP);
-        //             context.instruction(self).unwrap();
-        //         }
-        //         None => todo!(),
-        //         _ => todo!(),
-        //     }
-        //     self.pc += 1;
-        // }
+        while self.instruction_result == InstructionResult::Continue {
+            self.step();
+        }
     }
 }
 
@@ -80,10 +62,11 @@ mod tests {
 
     #[test]
     fn test_push_pop() {
-        let code = Bytes::from_static(&[opcodes::PUSH1, 0x2A, opcodes::POP]);
+        let code =
+            Bytes::from_static(&[opcodes::PUSH0, opcodes::PUSH0, opcodes::POP, opcodes::POP]);
         let mut evm = Interpreter::new(code);
-        evm.execute();
-
+        evm.run();
+        println!("{:?}", evm.stack);
         assert_eq!(evm.stack.len(), 0);
     }
 }

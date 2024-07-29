@@ -15,7 +15,7 @@ impl Opcode {
     }
 
     pub fn context(self) -> OpcodeContext {
-        return OPCODE_JUMPTABLE[self.0 as usize].unwrap();
+        OPCODE_JUMPTABLE[self.0 as usize].unwrap()
     }
 }
 
@@ -30,9 +30,19 @@ impl OpcodeContext {
     pub fn instruction(&self, interpreter: &mut Interpreter) {
         (self.instruction)(interpreter)
     }
+
+    /// Returns the additional items placed on the stack (α)
+    pub fn inputs(&self) -> u8 {
+        self.inputs
+    }
+
+    /// Returns the number of items removed from the stack (δ)
+    pub fn outputs(&self) -> u8 {
+        self.outputs
+    }
 }
 
-fn todo_instr(i: &mut Interpreter) {
+fn todo_instr(_: &mut Interpreter) {
     todo!()
 }
 
@@ -42,9 +52,9 @@ macro_rules! opcodes {
             $name:ident, $value:literal, $instr:expr, $inputs:expr, $outputs:expr;
         )*
     ) => {
-        impl Opcode {$(
-            pub const $name: Self = Self($value);
-        )*}
+        $(
+            pub const $name: u8 = $value;
+        )*
 
         /// Get the context of a given opcode
         pub const OPCODE_JUMPTABLE: [Option<OpcodeContext>; 256] = {
@@ -57,8 +67,6 @@ macro_rules! opcodes {
                 });
             )*
             table
-
-
         };
 
 
@@ -74,10 +82,6 @@ macro_rules! opcodes {
         }
     }
 }
-// TODO: assign the fn calls to each opcode
-// Maybe a lookup table?
-// Maybe just let it be a generated function?
-// not sure what/how to do that.
 
 opcodes! {
     // 10s: Comparison & Bitwise Logic Operations
@@ -251,7 +255,7 @@ mod tests {
 
     #[test]
     fn conversion() {
-        let add_op = super::Opcode::PUSH0;
-        assert_eq!(Opcode::new(add_op.0).unwrap(), add_op);
+        let add_op = super::PUSH0;
+        assert_eq!(Opcode::new(add_op).unwrap().0, add_op);
     }
 }
