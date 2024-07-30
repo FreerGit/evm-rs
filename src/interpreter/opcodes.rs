@@ -91,10 +91,10 @@ opcodes! {
     SUB,            0x03, arithmetic::sub, 2, 1;
     DIV,            0x04, arithmetic::div, 2, 1;
     SDIV,           0x05, todo_instr, 2, 1;
-    MOD,            0x06, todo_instr, 2, 1;
+    MOD,            0x06, arithmetic::rem, 2, 1;
     SMOD,           0x07, todo_instr, 2, 1;
-    ADDMOD,         0x08, todo_instr, 3, 1;
-    MULMOD,         0x09, todo_instr, 3, 1;
+    ADDMOD,         0x08, arithmetic::addmod, 3, 1;
+    MULMOD,         0x09, arithmetic::mulmod, 3, 1;
     EXP,            0x0a, todo_instr, 2, 1;
     SIGNEXTEND,     0x0b, todo_instr, 2, 1;
     LT,             0x10, todo_instr, 2, 1;

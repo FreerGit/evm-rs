@@ -1,4 +1,6 @@
-use crate::{domain::constants::U256, interpreter::Interpreter};
+use ruint::aliases::U256;
+
+use crate::interpreter::Interpreter;
 
 pub fn push0(interpreter: &mut Interpreter) {
     if let Err(result) = interpreter.stack.push(U256::ZERO) {
