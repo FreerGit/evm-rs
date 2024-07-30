@@ -95,7 +95,7 @@ opcodes! {
     SMOD,           0x07, todo_instr, 2, 1;
     ADDMOD,         0x08, arithmetic::addmod, 3, 1;
     MULMOD,         0x09, arithmetic::mulmod, 3, 1;
-    EXP,            0x0a, todo_instr, 2, 1;
+    EXP,            0x0a, arithmetic::exp, 2, 1;
     SIGNEXTEND,     0x0b, todo_instr, 2, 1;
     LT,             0x10, todo_instr, 2, 1;
     GT,             0x11, todo_instr, 2, 1;

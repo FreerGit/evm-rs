@@ -47,6 +47,7 @@ impl Interpreter {
                 Some(op) => op.context().instruction(self),
                 None => todo!(),
             }
+            self.pc += 1;
         }
     }
 
@@ -62,6 +63,7 @@ impl Interpreter {
 #[cfg(test)]
 mod tests {
     use bytes::Bytes;
+    use ruint::aliases::U256;
 
     use crate::interpreter::{opcodes, InstructionResult};
 
@@ -72,11 +74,41 @@ mod tests {
         Interpreter::new(code)
     }
 
+    fn build_evm_w_stack(bytes: &'static [u8], to_push: &[U256]) -> Interpreter {
+        let code = Bytes::from_static(bytes);
+        let mut evm = Interpreter::new(code);
+        for num in to_push.iter().rev() {
+            evm.stack.push(*num).unwrap();
+        }
+        evm
+    }
+
     #[test]
     fn test_push_pop() {
         let mut evm = build_evm(&[opcodes::PUSH0, opcodes::PUSH0, opcodes::POP, opcodes::POP]);
         let instr_res = evm.run();
         assert_eq!(instr_res, InstructionResult::Stop);
         assert_eq!(evm.stack.len(), 0);
+    }
+
+    #[test]
+    fn pc() {
+        let mut evm = build_evm_w_stack(
+            &[
+                opcodes::PUSH0,
+                opcodes::POP,
+                opcodes::ADD,
+                opcodes::ADDMOD,
+                opcodes::PUSH0,
+                opcodes::POP,
+            ],
+            &[U256::from(2), U256::from(2), U256::from(3), U256::from(5)],
+        );
+
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        println!("{:?}", evm);
+        assert_eq!(evm.stack.len(), 1);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(2));
     }
 }

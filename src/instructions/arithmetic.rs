@@ -7,7 +7,6 @@ pub fn add(interpreter: &mut Interpreter) {
         Ok((r1, r2)) => *r2 = r1.wrapping_add(*r2),
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 3;
 }
 
 pub fn mul(interpreter: &mut Interpreter) {
@@ -15,7 +14,6 @@ pub fn mul(interpreter: &mut Interpreter) {
         Ok((r1, r2)) => *r2 = r1.wrapping_mul(*r2),
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 3;
 }
 
 pub fn sub(interpreter: &mut Interpreter) {
@@ -23,7 +21,6 @@ pub fn sub(interpreter: &mut Interpreter) {
         Ok((r1, r2)) => *r2 = r1.wrapping_sub(*r2),
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 3;
 }
 
 pub fn div(interpreter: &mut Interpreter) {
@@ -35,7 +32,6 @@ pub fn div(interpreter: &mut Interpreter) {
         }
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 3;
 }
 
 pub fn rem(interpreter: &mut Interpreter) {
@@ -47,7 +43,6 @@ pub fn rem(interpreter: &mut Interpreter) {
         }
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 3;
 }
 
 pub fn smod(interpreter: &mut Interpreter) {
@@ -55,7 +50,6 @@ pub fn smod(interpreter: &mut Interpreter) {
         Ok((_, _)) => todo!(),
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 3;
 }
 
 pub fn addmod(interpreter: &mut Interpreter) {
@@ -63,7 +57,6 @@ pub fn addmod(interpreter: &mut Interpreter) {
         Ok((r1, r2, r3)) => *r3 = r1.add_mod(r2, *r3),
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 4;
 }
 
 pub fn mulmod(interpreter: &mut Interpreter) {
@@ -71,7 +64,13 @@ pub fn mulmod(interpreter: &mut Interpreter) {
         Ok((r1, r2, r3)) => *r3 = r1.mul_mod(r2, *r3),
         Err(result) => interpreter.instruction_result = result.into(),
     }
-    interpreter.pc += 4;
+}
+
+pub fn exp(interpreter: &mut Interpreter) {
+    match interpreter.stack.pop_top() {
+        Ok((r1, r2)) => *r2 = r1.pow(*r2),
+        Err(result) => interpreter.instruction_result = result.into(),
+    }
 }
 
 #[cfg(test)]
@@ -158,11 +157,43 @@ mod tests {
         assert_eq!(evm.stack.pop().unwrap(), U256::from(2));
 
         evm = build_evm(
-            &[opcodes::MOD],
+            &[opcodes::ADDMOD],
             &[U256::from(1), U256::from(1), U256::from(2)],
         );
         let instr_res = evm.run();
         assert_eq!(instr_res, InstructionResult::Stop);
         assert_eq!(evm.stack.pop().unwrap(), U256::from(0));
+    }
+
+    #[test]
+    fn mul_mod() {
+        let mut evm = build_evm(
+            &[opcodes::MULMOD],
+            &[U256::from(4), U256::from(4), U256::from(14)],
+        );
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(2));
+
+        evm = build_evm(
+            &[opcodes::MULMOD],
+            &[U256::from(3), U256::from(3), U256::from(3)],
+        );
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(0));
+    }
+
+    #[test]
+    fn exp() {
+        let mut evm = build_evm(&[opcodes::EXP], &[U256::from(3), U256::from(2)]);
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(9));
+
+        evm = build_evm(&[opcodes::EXP], &[U256::from(4), U256::from(0)]);
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(1));
     }
 }
