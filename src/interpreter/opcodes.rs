@@ -1,4 +1,4 @@
-use crate::instructions::stack;
+use crate::instructions::{arithmetic, stack};
 
 use super::Interpreter;
 
@@ -86,7 +86,7 @@ macro_rules! opcodes {
 opcodes! {
     // 10s: Comparison & Bitwise Logic Operations
     STOP,           0x00, todo_instr, 0, 0;
-    ADD,            0x01, todo_instr, 2, 1;
+    ADD,            0x01, arithmetic::add, 2, 1;
     MUL,            0x02, todo_instr, 2, 1;
     SUB,            0x03, todo_instr, 2, 1;
     DIV,            0x04, todo_instr, 2, 1;

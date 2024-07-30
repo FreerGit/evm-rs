@@ -6,7 +6,7 @@ use stack::{Stack, StackError};
 
 use crate::{domain::bytecode::Bytecode, interpreter::opcodes::Opcode};
 
-#[derive(Debug, Default, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
 pub enum InstructionResult {
     /// The default, any other value signals exit of execution (error).
     #[default]
@@ -18,6 +18,7 @@ pub enum InstructionResult {
 
 // pub type Result<T> = std::result::Result<T, InterpreterError>;
 
+#[derive(Debug)]
 pub struct Interpreter {
     /// Bytecode that instruction result will point to
     pub bytecode: Bytecode,
@@ -49,15 +50,19 @@ impl Interpreter {
         }
     }
 
-    pub fn run(&mut self) {
+    pub fn run(&mut self) -> InstructionResult {
         while self.instruction_result == InstructionResult::Continue {
             self.step();
         }
+
+        self.instruction_result
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use ruint::aliases::U256;
+
     use super::*;
 
     #[test]
@@ -65,8 +70,22 @@ mod tests {
         let code =
             Bytes::from_static(&[opcodes::PUSH0, opcodes::PUSH0, opcodes::POP, opcodes::POP]);
         let mut evm = Interpreter::new(code);
-        evm.run();
+        let instr_res = evm.run();
         println!("{:?}", evm.stack);
+        assert_eq!(instr_res, InstructionResult::Stop);
         assert_eq!(evm.stack.len(), 0);
+    }
+
+    #[test]
+    fn add() {
+        let code = Bytes::from_static(&[opcodes::ADD]);
+        let mut evm = Interpreter::new(code);
+        evm.stack.push(U256::from(1)).unwrap();
+        evm.stack.push(U256::from(1)).unwrap();
+        let instr_res = evm.run();
+        println!("{:?}", evm);
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.len(), 1);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(2));
     }
 }

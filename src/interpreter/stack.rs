@@ -8,7 +8,7 @@ use super::InstructionResult;
 
 pub type Result<T> = std::result::Result<T, StackError>;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum StackError {
     Overflow,
     Underflow,
@@ -58,12 +58,18 @@ impl Stack {
         self.data.pop().ok_or(StackError::Underflow)
     }
 
-    pub fn top(&mut self) -> Option<&mut U256> {
+    pub fn top(&mut self) -> Result<&mut U256> {
         let len = self.data.len();
-        if len > 1 {
-            Some(&mut self.data[len - 1])
+        if len > 0 {
+            Ok(&mut self.data[len - 1])
         } else {
-            None
+            Err(StackError::Underflow)
         }
+    }
+
+    /// Pops a item from the stack and returns a reference to the top of the stack.
+    /// This is equal to calling `pop()`` then `top()`.
+    pub fn pop_top(&mut self) -> Result<(U256, &mut U256)> {
+        Ok((self.pop()?, self.top()?))
     }
 }
