@@ -65,27 +65,64 @@ mod tests {
 
     use super::*;
 
+    fn build_evm(bytes: &'static [u8]) -> Interpreter {
+        let code = Bytes::from_static(bytes);
+        Interpreter::new(code)
+    }
+
     #[test]
     fn test_push_pop() {
-        let code =
-            Bytes::from_static(&[opcodes::PUSH0, opcodes::PUSH0, opcodes::POP, opcodes::POP]);
-        let mut evm = Interpreter::new(code);
+        let mut evm = build_evm(&[opcodes::PUSH0, opcodes::PUSH0, opcodes::POP, opcodes::POP]);
         let instr_res = evm.run();
-        println!("{:?}", evm.stack);
         assert_eq!(instr_res, InstructionResult::Stop);
         assert_eq!(evm.stack.len(), 0);
     }
 
     #[test]
     fn add() {
-        let code = Bytes::from_static(&[opcodes::ADD]);
-        let mut evm = Interpreter::new(code);
+        let mut evm = build_evm(&[opcodes::ADD]);
         evm.stack.push(U256::from(1)).unwrap();
-        evm.stack.push(U256::from(1)).unwrap();
+        evm.stack.push(U256::from(2)).unwrap();
         let instr_res = evm.run();
-        println!("{:?}", evm);
         assert_eq!(instr_res, InstructionResult::Stop);
         assert_eq!(evm.stack.len(), 1);
-        assert_eq!(evm.stack.pop().unwrap(), U256::from(2));
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(3));
+    }
+
+    #[test]
+    fn mul() {
+        let mut evm = build_evm(&[opcodes::MUL]);
+        evm.stack.push(U256::from(3)).unwrap();
+        evm.stack.push(U256::from(3)).unwrap();
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(9));
+    }
+
+    #[test]
+    fn sub() {
+        let mut evm = build_evm(&[opcodes::SUB]);
+        evm.stack.push(U256::from(3)).unwrap();
+        evm.stack.push(U256::from(2)).unwrap();
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::MAX);
+    }
+
+    #[test]
+    fn div() {
+        let mut evm = build_evm(&[opcodes::DIV]);
+        evm.stack.push(U256::from(3)).unwrap();
+        evm.stack.push(U256::from(3)).unwrap();
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(1));
+
+        evm = build_evm(&[opcodes::DIV]);
+        evm.stack.push(U256::from(0)).unwrap();
+        evm.stack.push(U256::from(3)).unwrap();
+        let instr_res = evm.run();
+        assert_eq!(instr_res, InstructionResult::Stop);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(0));
     }
 }

@@ -87,9 +87,9 @@ opcodes! {
     // 10s: Comparison & Bitwise Logic Operations
     STOP,           0x00, todo_instr, 0, 0;
     ADD,            0x01, arithmetic::add, 2, 1;
-    MUL,            0x02, todo_instr, 2, 1;
-    SUB,            0x03, todo_instr, 2, 1;
-    DIV,            0x04, todo_instr, 2, 1;
+    MUL,            0x02, arithmetic::mul, 2, 1;
+    SUB,            0x03, arithmetic::sub, 2, 1;
+    DIV,            0x04, arithmetic::div, 2, 1;
     SDIV,           0x05, todo_instr, 2, 1;
     MOD,            0x06, todo_instr, 2, 1;
     SMOD,           0x07, todo_instr, 2, 1;
