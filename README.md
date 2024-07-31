@@ -4,8 +4,8 @@ Got any of those opcodes??
 [![CI](https://github.com/freergit/evm-rs/actions/workflows/ci.yml/badge.svg)][gh-ci]
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)][mit-license]
 
+[gh-ci]: https://github.com/freergit/evm-rs/actions/workflows/ci.yml
 [mit-license]: https://opensource.org/license/mit/
-[gh-ci]: https://github.com/bluealloy/revm/actions/workflows/ci.yml
 
 
 ## Notes
@@ -29,24 +29,18 @@ Important Block numbers:
 | Paris             | 15537394 |
 | Shanghai          | 17034870 |
 
-<r>Adress = 160 bit</r>
+Adress = 160 bit
 
-<r>state database =  Merkle Patricia tree</r>
+state database =  Merkle Patricia tree</r>
 
 account:
 
-<r>if the codeHash field is the keccak-256 hash of the empty tring the node represents a non-contrat.</r>
+if the codeHash field is the keccak-256 hash of the empty tring the node represents a non-contrat.
 
-<g>A account is empty if it has no code, zero nonce and zero balance. <g>
+A account is empty if it has no code, zero nonce and zero balance.
 
 Transactions:
 
 The sender of a transaction cannot be a contrat
 
-<p>The transaction type</p>
-
-<style>
-r { color: Red }
-g { color: Green }
-</style>
-
+The transaction type
