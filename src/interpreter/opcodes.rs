@@ -1,4 +1,4 @@
-use crate::instructions::{arithmetic, stack};
+use crate::instructions::{arithmetic, comparison, stack};
 
 use super::Interpreter;
 
@@ -97,12 +97,12 @@ opcodes! {
     MULMOD,         0x09, arithmetic::mulmod, 3, 1;
     EXP,            0x0a, arithmetic::exp, 2, 1;
     SIGNEXTEND,     0x0b, todo_instr, 2, 1;
-    LT,             0x10, todo_instr, 2, 1;
-    GT,             0x11, todo_instr, 2, 1;
+    LT,             0x10, comparison::lt, 2, 1;
+    GT,             0x11, comparison::gt, 2, 1;
     SLT,            0x12, todo_instr, 2, 1;
     SGT,            0x13, todo_instr, 2, 1;
-    EQ,             0x14, todo_instr, 2, 1;
-    ISZERO,         0x15, todo_instr, 1, 1;
+    EQ,             0x14, comparison::eq, 2, 1;
+    ISZERO,         0x15, comparison::iszero, 1, 1;
     AND,            0x16, todo_instr, 2, 1;
     OR,             0x17, todo_instr, 2, 1;
     XOR,            0x18, todo_instr, 2, 1;
