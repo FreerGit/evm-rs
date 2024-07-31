@@ -38,16 +38,15 @@ impl Interpreter {
     }
 
     pub fn step(&mut self) {
-        // let instr_pointer = self.pc;
         if self.pc >= self.bytecode.len() {
             self.instruction_result = InstructionResult::Stop;
         } else {
             let opcode = self.bytecode.bytes_slice()[self.pc];
+            self.pc += 1;
             match Opcode::new(opcode) {
                 Some(op) => op.context().instruction(self),
                 None => todo!(),
             }
-            self.pc += 1;
         }
     }
 
