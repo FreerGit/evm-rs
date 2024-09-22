@@ -1,4 +1,4 @@
-use crate::instructions::{arithmetic, comparison, logical, stack};
+use crate::instructions::{arithmetic, bitwise, comparison, stack};
 
 use super::Interpreter;
 
@@ -103,12 +103,12 @@ opcodes! {
     SGT,            0x13, todo_instr, 2, 1;
     EQ,             0x14, comparison::eq, 2, 1;
     ISZERO,         0x15, comparison::iszero, 1, 1;
-    AND,            0x16, logical::and, 2, 1;
-    OR,             0x17, logical::or, 2, 1;
-    XOR,            0x18, logical::xor, 2, 1;
-    NOT,            0x19, logical::not, 1, 1;
+    AND,            0x16, bitwise::and, 2, 1;
+    OR,             0x17, bitwise::or, 2, 1;
+    XOR,            0x18, bitwise::xor, 2, 1;
+    NOT,            0x19, bitwise::not, 1, 1;
     BYTE,           0x1a, todo_instr, 2, 1;
-    SHL,            0x1b, todo_instr, 2, 1;
+    SHL,            0x1b, bitwise::shl, 2, 1;
     SHR,            0x1c, todo_instr, 2, 1;
     SAR,            0x1d, todo_instr, 2, 1;
 

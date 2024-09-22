@@ -1,4 +1,8 @@
-use crate::interpreter::Interpreter;
+use core::panic;
+
+use ruint::aliases::U256;
+
+use crate::interpreter::{stack::StackError, Interpreter};
 
 pub fn and(interpreter: &mut Interpreter) {
     match interpreter.stack.pop_top() {
@@ -24,6 +28,19 @@ pub fn xor(interpreter: &mut Interpreter) {
 pub fn not(interpreter: &mut Interpreter) {
     match interpreter.stack.top() {
         Ok(r1) => *r1 = !(*r1),
+        Err(result) => interpreter.instruction_result = result.into(),
+    }
+}
+
+pub fn shl(interpreter: &mut Interpreter) {
+    match interpreter.stack.pop_top() {
+        Ok((r1, r2)) => {
+            if let Some(res) = r2.checked_shl(r1.to()) {
+                *r2 = res;
+            } else {
+                *r2 = U256::ZERO
+            }
+        }
         Err(result) => interpreter.instruction_result = result.into(),
     }
 }
@@ -78,5 +95,20 @@ mod tests {
         assert_eq!(evm.stack.pop().unwrap(), U256::MAX);
         evm = build_evm(&[opcodes::NOT], &[U256::from(5)]);
         assert_eq!(evm.stack.pop().unwrap(), U256::MAX - U256::from(5));
+    }
+
+    #[test]
+    fn bitwise_shl() {
+        let mut evm = build_evm(&[opcodes::SHL], &[U256::from(1), U256::from(0)]);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(0));
+
+        evm = build_evm(&[opcodes::SHL], &[U256::from(1), U256::from(5)]);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(10));
+
+        evm = build_evm(&[opcodes::SHL], &[U256::from(2), U256::from(5)]);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(20));
+
+        evm = build_evm(&[opcodes::SHL], &[U256::from(256), U256::MAX]);
+        assert_eq!(evm.stack.pop().unwrap(), U256::from(0));
     }
 }
